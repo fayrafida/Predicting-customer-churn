@@ -1,0 +1,22 @@
+artifact_path: file:D:/Predicting-customer-churn/Membangun_model/mlartifacts/0/models/m-71111b6d35724017b984716dfcd7667f/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.7
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.0
+mlflow_version: 3.1.0
+model_id: m-71111b6d35724017b984716dfcd7667f
+model_size_bytes: 18948471
+model_uuid: m-71111b6d35724017b984716dfcd7667f
+prompts: null
+run_id: f540cee385f04a58b097bfabc41fbcb9
+utc_time_created: '2025-06-19 16:24:22.248237'

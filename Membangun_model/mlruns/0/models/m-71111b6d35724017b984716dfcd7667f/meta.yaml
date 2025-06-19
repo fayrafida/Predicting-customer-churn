@@ -1,0 +1,10 @@
+artifact_location: file:D:/Predicting-customer-churn/Membangun_model/mlartifacts/0/models/m-71111b6d35724017b984716dfcd7667f/artifacts
+creation_timestamp: 1750350261851
+experiment_id: '0'
+last_updated_timestamp: 1750350275024
+model_id: m-71111b6d35724017b984716dfcd7667f
+model_type: ''
+name: model
+source_run_id: f540cee385f04a58b097bfabc41fbcb9
+status: 2
+status_message: null
