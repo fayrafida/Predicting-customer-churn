@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Workflow-CI/MLProject/WA_Fn-UseC_-Telco-Customer-Churn_preprocessing.csv'
   workflow_dispatch:
 
 jobs:
