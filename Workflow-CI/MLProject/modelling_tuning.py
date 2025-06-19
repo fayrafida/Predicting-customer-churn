@@ -1,18 +1,17 @@
 import pandas as pd
+import json
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import mlflow
 import mlflow.sklearn
+import time
 
-# Atur tracking URI ke server MLflow yang aktif di localhost
+# Atur tracking URI ke server MLflow
 mlflow.set_tracking_uri("http://localhost:5000")
 
 # Load dataset hasil preprocessing
 df = pd.read_csv("WA_Fn-UseC_-Telco-Customer-Churn_preprocessing.csv")
-
-# Hapus kolom yang tidak relevan
-df = df.drop(columns=["customerID", "tenure_group", "monthly_charge_group"])
 
 # Pisahkan fitur dan label
 X = df.drop("Churn_True", axis=1)
@@ -31,22 +30,37 @@ param_grid = {
 grid = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=3)
 
 with mlflow.start_run():
-    # Latih model dengan grid search
+    start_time = time.time()
     grid.fit(X_train, y_train)
     best_model = grid.best_estimator_
+    latency = (time.time() - start_time) * 1000  # konversi ke milidetik
 
-    # Prediksi
     y_pred = best_model.predict(X_test)
 
-    # Logging manual
-    mlflow.log_params(grid.best_params_)
-    mlflow.log_metric("accuracy", accuracy_score(y_test, y_pred))
-    mlflow.log_metric("precision", precision_score(y_test, y_pred))
-    mlflow.log_metric("recall", recall_score(y_test, y_pred))
-    mlflow.log_metric("f1_score", f1_score(y_test, y_pred))
+    acc = accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred)
+    rec = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
 
-    # Simpan model
+    # Logging ke MLflow
+    mlflow.log_params(grid.best_params_)
+    mlflow.log_metric("accuracy", acc)
+    mlflow.log_metric("precision", prec)
+    mlflow.log_metric("recall", rec)
+    mlflow.log_metric("f1_score", f1)
+    mlflow.log_metric("latency_ms", latency)
+
+    # Logging ke file JSON untuk Prometheus Exporter
+    with open("metrics.json", "w") as f:
+        json.dump({
+            "accuracy": acc,
+            "precision": prec,
+            "rec": rec,
+            "f1_score": f1,
+            "latency_ms": latency
+        }, f)
+
+    # Simpan model ke MLflow artifacts
     mlflow.sklearn.log_model(best_model, "model")
 
-    print("Model dan metrik berhasil dicatat di MLflow Tracking Server.")
-
+    print("Model dan metrik berhasil dicatat di MLflow & disiapkan untuk Prometheus.")
